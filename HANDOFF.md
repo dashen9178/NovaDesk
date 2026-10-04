@@ -303,6 +303,10 @@ $env:ELECTRON_RUN_AS_NODE=1
    **下次重新构建 APK 前，先把 `versionName` 和 `versionCode` 各加一位**
    （当前分享包是 2.7），不然用户分不清手机里装的是新的还是旧的。
 
+   **GitHub 仓库**：https://github.com/dashen9178/NovaDesk （私有）。
+   仓库只含源码和构建脚本；`ai/publish.py`、`ai/real_*.py`、`local.properties`、
+   构建产物和下载的 SDK 已由 `.gitignore` 排除。
+
 **7. 电脑版真实拖放还没人工复验。** 自动化模拟拖放和直接导航都通过；
    GUI 自动化真实拖文件时被资源管理器预览面板干扰。下次先按 `Alt+P`
    关掉预览面板，再手动拖一张图，确认附件 chip 出现且页面不跳转。
