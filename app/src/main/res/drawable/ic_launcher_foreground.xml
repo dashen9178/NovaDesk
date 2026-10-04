@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- NovaDesk 图标：一块屏幕上的窗口 -->
+    <path
+        android:fillColor="#0D1620"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#1E2228"
+        android:pathData="M22,30h64v48h-64z" />
+    <path
+        android:fillColor="#2D3748"
+        android:pathData="M22,30h64v9h-64z" />
+    <path
+        android:fillColor="#E05252"
+        android:pathData="M76,34.5m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <path
+        android:fillColor="#E0A852"
+        android:pathData="M68,34.5m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <path
+        android:fillColor="#52C452"
+        android:pathData="M60,34.5m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <path
+        android:fillColor="#4A90D9"
+        android:pathData="M28,46h14v4h-14zM28,54h22v4h-22zM28,62h10v4h-10z" />
+    <path
+        android:fillColor="#1A1F26"
+        android:pathData="M0,94h108v14h-108z" />
+    <path
+        android:fillColor="#4A90D9"
+        android:pathData="M6,98h8v6h-8z" />
+</vector>

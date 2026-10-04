@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      壳的主题：普通应用的样子 —— **不做全屏沉浸、不隐藏状态栏**。
+
+      导出的东西是"别人的 app"，一上来就抢全屏、把状态栏藏掉，
+      用户会以为手机坏了。让系统照常显示状态栏、WebView 自然落在状态栏下面，
+      这对任意内容都是最稳的默认。
+    -->
+    <style name="NovaTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/nova_surface</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">@color/nova_surface</item>
+        <item name="android:navigationBarColor">@color/nova_surface</item>
+    </style>
+</resources>

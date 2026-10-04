@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 要直连 api.deepseek.com -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+      文件权限。默认全都用不上 —— 只有用户在界面上把「权限」拨到
+      「完全权限」那一档，才会真的去要 MANAGE_EXTERNAL_STORAGE；
+      拨到「指定文件夹」那一档走 SAF，一条敏感权限都不用。
+      maxSdkVersion 是为了别在已经不需要它的新系统上多列权限。
+    -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
+    <!-- 把生成的 APK 交给系统安装器。Android 8 起，应用要主动装包就得声明它 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!--
+      Shizuku 的 provider：它是"ADB 权限"的入口。
+      Shizuku 通过它把 shell（uid 2000）身份借给本应用，
+      之后我们才能装应用、授权、截屏、模拟点击、改系统设置这些。
+      权限声明成 INTERACT_ACROSS_USERS_FULL 是官方要求 —— 它保证只有
+      Shizuku 自己（以及 root）能读写这个 provider，别的应用碰不到。
+    -->
+    <uses-permission
+        android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/NovaTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|density|smallestScreenSize|uiMode|layoutDirection"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/NovaTheme"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          导出 APK 后要把它交给系统安装器，而 Android 7 起不允许再传 file:// 出去，
+          必须走 content:// —— 这个 provider 就是干这个的。
+          authority 用 ${applicationId} 前缀，避免和别的应用撞。
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/nova_file_paths" />
+        </provider>
+
+        <!-- Shizuku 的入口 provider（拿 ADB 权限用），必须这么写 -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+    </application>
+
+</manifest>

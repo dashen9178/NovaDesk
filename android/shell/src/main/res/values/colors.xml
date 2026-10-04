@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- 页面底色（M3 surface）。窗口底用它，启动和系统栏临时唤出时都不会露白 -->
+    <color name="nova_surface">#FEF7FF</color>
+</resources>

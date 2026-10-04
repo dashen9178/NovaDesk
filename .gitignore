@@ -1,0 +1,60 @@
+# Gradle / Android
+.gradle/
+**/build/
+**/.cxx/
+captures/
+local.properties
+*.apk
+*.aab
+*.ap_
+*.dex
+*.keystore
+*.jks
+
+# Desktop WebView2 / C++ build artifacts
+desktop/_sdk/
+desktop/dist/
+desktop/x64/
+desktop/Release/
+desktop/Debug/
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.exe
+*.res
+*.tlog
+*.idb
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Test and temporary outputs
+_shots/
+_verify/
+**/_shots/
+**/_verify/
+*.tmp
+*.log
+
+# Secrets and local-only publishing
+.env
+*.secret
+ai/publish.py
+# Real paid integration tests contain a local DeepSeek key
+ai/real_*.py
+
+# Generated single-file app; rebuilt by ai/build.py
+NovaDesk.html
+**/src/main/assets/NovaDesk.html
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+.idea/
+.vscode/

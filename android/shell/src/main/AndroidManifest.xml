@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  导出壳的清单。
+
+  ★ 两条铁律，改坏了导出的 APK 就会"装得上、一点就闪退"：
+
+  1. applicationId（= 这个 package=）会被导出流程整体改写成
+     com.novadesk.rt.<用户应用名的哈希>。
+  2. Activity 的 android:name 必须写**完整类名**，而且那个类住在
+     com.novadesk.shellhost 里 —— 跟上面那串待改写的包名完全无关。
+     这样改完包名之后，清单指向的类在 dex 里依然存在。
+     千万别图省事写成 ".ShellActivity"，那样它会跟着包名一起变，直接指向不存在的类。
+
+  android:label 用一串固定锚点，导出时整段换成用户起的应用名。
+  versionName 由 build.gradle.kts 给成 "0.00"，同样是导出时的替换锚点。
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- AI 做的东西可能要联网 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="XXXXXXXXXXXXXXXXXXXX"
+        android:supportsRtl="false"
+        android:usesCleartextTraffic="false"
+        android:theme="@style/NovaTheme"
+        tools:ignore="HardcodedText">
+
+        <activity
+            android:name="com.novadesk.shellhost.ShellActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|density|smallestScreenSize|uiMode|layoutDirection"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/NovaTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

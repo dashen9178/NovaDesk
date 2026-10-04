@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      白底、无标题栏。**不再 windowFullscreen** ——
+      用户明确要求「把手机通知栏区域显示」，那就是要看得见状态栏。
+      全屏仍然能用（跟 AI 说"全屏显示"，走 goImmersive）。
+
+      windowLightStatusBar=true：底色是浅的，状态栏的图标/时间得是深色，
+      否则白底白字，用户什么都看不见。
+    -->
+    <style name="NovaTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/nova_surface</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/nova_surface</item>
+        <item name="android:navigationBarColor">@color/nova_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

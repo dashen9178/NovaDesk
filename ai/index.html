@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#FEF7FF">
+<title>NovaDesk</title>
+<style>
+/* ==========================================================================
+   Material Design 3 —— 扁平、靠"表面色阶"分层，不用阴影堆立体感。
+   色值取自 Material Components 官方的 M3 基线配色。
+   ========================================================================== */
+:root {
+  --md-primary:                   #6750A4;
+  --md-on-primary:                #FFFFFF;
+  --md-primary-container:         #EADDFF;
+  --md-on-primary-container:      #21005D;
+
+  --md-secondary:                 #625B71;
+  --md-on-secondary:              #FFFFFF;
+  --md-secondary-container:       #E8DEF8;
+  --md-on-secondary-container:    #1D192B;
+
+  --md-tertiary:                  #7D5260;
+  --md-tertiary-container:        #FFD8E4;
+  --md-on-tertiary-container:     #31111D;
+
+  --md-error:                     #B3261E;
+  --md-on-error:                  #FFFFFF;
+  --md-error-container:           #F9DEDC;
+  --md-on-error-container:        #410E0B;
+
+  --md-surface:                   #FEF7FF;
+  --md-on-surface:                #1D1B20;
+  --md-surface-variant:           #E7E0EC;
+  --md-on-surface-variant:        #49454F;
+  --md-surface-container-lowest:  #FFFFFF;
+  --md-surface-container-low:     #F7F2FA;
+  --md-surface-container:         #F3EDF7;
+  --md-surface-container-high:    #ECE6F0;
+  --md-surface-container-highest: #E6E0E9;
+  --md-inverse-surface:           #322F35;
+  --md-inverse-on-surface:        #F5EFF7;
+
+  --md-outline:                   #79747E;
+  --md-outline-variant:           #CAC4D0;
+
+  /* M3 状态层 */
+  --md-hover:        rgba(29, 27, 32, .08);
+  --md-press:        rgba(29, 27, 32, .12);
+  --md-hover-p:      rgba(103, 80, 164, .08);
+  --md-press-p:      rgba(103, 80, 164, .12);
+
+  --md-font: "Google Sans", Roboto, -apple-system, BlinkMacSystemFont,
+             "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+             "Microsoft YaHei", sans-serif;
+  --md-mono: "Roboto Mono", "SF Mono", Consolas, Menlo, monospace;
+
+  --md-xs: 4px;  --md-sm: 8px;  --md-md: 12px;
+  --md-lg: 16px; --md-xl: 28px; --md-full: 999px;
+
+  /* M3 里只有浮起来的东西才有阴影：FAB、对话框、Snackbar */
+  --md-elev-fab: 0 1px 3px 0 rgba(0,0,0,.30), 0 4px 8px 3px rgba(0,0,0,.15);
+  --md-elev-dialog: 0 1px 3px 0 rgba(0,0,0,.30), 0 4px 8px 3px rgba(0,0,0,.15);
+
+  --md-topbar-h: 64px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: 400 16px/24px var(--md-font);
+  letter-spacing: .5px;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+button, textarea, input, select { font: inherit; color: inherit; letter-spacing: inherit; }
+button { cursor: pointer; border: none; background: none; padding: 0; }
+a { color: var(--md-primary); }
+svg { display: block; }
+
+/* ==========================================================================
+   M3 组件
+   ========================================================================== */
+
+/* icon button：48dp 触摸目标，24dp 图标，圆形状态层 */
+.icon-btn {
+  width: 48px; height: 48px; flex: 0 0 auto;
+  border-radius: var(--md-full);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--md-on-surface-variant);
+  transition: background .12s ease;
+}
+.icon-btn:hover { background: var(--md-hover); }
+.icon-btn:active { background: var(--md-press); }
+.icon-btn.on { color: var(--md-primary); background: var(--md-secondary-container); }
+
+/* filled / tonal / outlined / text 按钮：M3 高度 40dp，全圆角 */
+.btn-filled, .btn-tonal, .btn-outlined, .btn-text {
+  /* ★ 高度写成 min-height 而不是定高，并允许换行。
+     用户报过「一些按钮文字一出去了」—— 定高 + 不换行时，
+     中文没有空格可断，一长就直接顶出按钮外面。
+     中文可以在任意字符处换行，放开就永远不会溢出了。 */
+  min-height: 40px; height: auto; padding: 8px 20px;
+  border-radius: var(--md-full);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 14px; font-weight: 500; letter-spacing: .1px; line-height: 19px;
+  white-space: normal; text-align: center; max-width: 100%;
+  transition: background .12s ease, filter .12s ease;
+}
+.btn-filled { background: var(--md-primary); color: var(--md-on-primary); }
+.btn-filled:hover { filter: brightness(1.08); }
+.btn-filled:disabled { background: rgba(29,27,32,.12); color: rgba(29,27,32,.38); cursor: not-allowed; filter: none; }
+.btn-tonal { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+.btn-tonal:hover { filter: brightness(.97); }
+.btn-outlined { border: 1px solid var(--md-outline); color: var(--md-primary); }
+.btn-outlined:hover { background: var(--md-hover-p); }
+.btn-text { color: var(--md-primary); padding: 0 12px; }
+.btn-text:hover { background: var(--md-hover-p); }
+
+/* ==========================================================================
+   外壳
+   ========================================================================== */
+#app { display: flex; flex-direction: column; height: 100%; }
+
+/* M3 small top app bar：64dp，surface 底，Title Large */
+header.topbar {
+  height: var(--md-topbar-h); flex: 0 0 auto;
+  display: flex; align-items: center; gap: 2px;
+  padding-left: max(8px, env(safe-area-inset-left));
+  padding-right: max(4px, env(safe-area-inset-right));
+  background: var(--md-surface);
+}
+.topbar h1 {
+  margin: 0 0 0 8px; flex: 1 1 auto; min-width: 0;
+  font-size: 22px; line-height: 28px; font-weight: 400; letter-spacing: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* 没配 API key 时把设置图标标红提醒（替代原来的小圆点） */
+.icon-btn.warn { color: var(--md-error); }
+
+/*
+ * AI 把 NovaDesk 自带部件收起来用的钩子。
+ * 状态在 state.hiddenUI 里，core.js 的 applyHiddenUI() 负责往 body 上加类。
+ * 用 display:none 而不是删 DOM —— 恢复的时候只要把类去掉就行，
+ * 而且用户刷新页面也不会真的丢东西。
+ */
+body.hide-topbar .topbar { display: none; }
+body.hide-title #appTitle { display: none; }
+body.hide-topwidgets .topwidgets { display: none; }
+body.hide-rail .rail { display: none; }
+body.hide-sidebar-region .sidebar { display: none; }
+body.hide-actions .actions { display: none; }
+body.hide-attach #btnAttach { display: none; }
+body.hide-sysbar .sysbar { display: none; }
+
+/* 顶栏被收走时的逃生口：点它进设置。永远不是 AI 能藏的东西。 */
+.escapebtn {
+  position: fixed; z-index: 60;
+  left: 10px; top: calc(env(safe-area-inset-top, 0px) + 10px);
+  width: 40px; height: 40px; min-height: 40px; padding: 0;
+  border: none; border-radius: 50%;
+  background: var(--md-surface-container-high);
+  color: var(--md-on-surface-variant);
+  box-shadow: var(--md-elev-2, 0 1px 3px rgba(0,0,0,.18));
+  cursor: pointer; opacity: .55;
+  font-size: 18px; line-height: 1;
+}
+.escapebtn:hover { opacity: 1; }
+.escapebtn[hidden] { display: none; }
+.escapebtn::before { content: "⚙"; }
+
+/*
+ * 顶栏里的小控件（时钟、日期这类）。
+ * 用户说过"让他加个时钟在最顶部他说改不了"—— 现在能了，就落在这儿。
+ */
+.topwidgets {
+  display: flex; align-items: center; gap: 10px; margin-right: 4px;
+  flex: 0 0 auto; max-width: 46%; overflow: hidden;
+}
+.topwidgets:empty { display: none; }
+/* 顶栏空间金贵：只留时间本身，标题和星期都收掉 */
+.topwidgets .widget { padding: 0; text-align: right; }
+.topwidgets .w-title,
+.topwidgets .w-sub { display: none; }
+.topwidgets .w-big {
+  font-size: 20px; line-height: 28px; font-weight: 500;
+  letter-spacing: 0; color: var(--md-on-surface);
+}
+.topwidgets .w-html { font-size: 14px; line-height: 20px; }
+
+/* 首屏精简：只留大字、输入框、思考、设置。历史按钮留着 —— 第一屏也得能翻旧对话 */
+#app.hero-mode .topbar h1,
+#app.hero-mode #btnNew { display: none; }
+/* 标题藏了之后，把右边那几个按钮推到最右（历史键仍然留在左边） */
+#app.hero-mode #btnThink { margin-left: auto; }
+
+/* ==========================================================================
+   主体
+   ========================================================================== */
+main.body { flex: 1 1 auto; display: flex; min-height: 0; }
+/*
+ * min-height:0 和 .scroll 上那条一样关键，**两层都得有**。
+ * 只给 .scroll 加是不够的：.chat 自己是 main.body（竖排 flex）的子项，
+ * 默认 min-height:auto = 不肯收缩到比内容小，于是内容一超过一屏，
+ * .chat 就带着整个文档一起长高 —— 输入框被顶到视口外面，
+ * 连"停止"按钮都跟着跑出屏幕，手指根本够不着（同一个病两个症状）。
+ * 症状只在内容超过一屏后出现，所以短对话时看着是好的。
+ */
+.chat { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+
+/*
+ * min-height:0 是关键。
+ * flex 项默认 min-height:auto —— 不肯收缩到比内容还小，
+ * 于是对话一长就把下面的输入框顶出屏幕（之前就是这个毛病）。
+ */
+.scroll {
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; overscroll-behavior: contain;
+}
+.scroll::-webkit-scrollbar { width: 6px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--md-outline-variant); border-radius: 3px; }
+
+.stream { max-width: 720px; margin: 0 auto; padding: 16px 16px 8px; }
+
+/* ==========================================================================
+   消息
+   ========================================================================== */
+.msg { margin-bottom: 20px; }
+.msg.user { display: flex; justify-content: flex-end; }
+.msg.user .bubble {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  border-radius: var(--md-lg) var(--md-lg) var(--md-xs) var(--md-lg);
+  padding: 10px 16px; max-width: 84%;
+  white-space: pre-wrap; word-break: break-word;
+}
+.msg.assistant .who {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+  color: var(--md-on-surface-variant);
+}
+.msg.assistant .who .mark {
+  width: 24px; height: 24px; border-radius: var(--md-full);
+  background: var(--md-primary-container); color: var(--md-on-primary-container);
+  font-size: 11px; font-weight: 700; letter-spacing: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.msg.assistant .content { word-break: break-word; }
+.msg.assistant .content:empty::after {
+  content: ''; display: inline-block; width: 8px; height: 16px;
+  background: var(--md-primary); vertical-align: -3px;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* 工具痕迹：M3 assist chip，扁平描边 */
+.toolcard {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px; padding: 0 12px 0 10px; margin: 0 6px 6px 0;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm);
+  color: var(--md-on-surface-variant);
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+}
+.toolcard .ic { color: var(--md-primary); font-weight: 700; }
+
+/* 思考过程：扁平 surface-container，无边框无阴影 */
+.think {
+  margin: 0 0 12px; border-radius: var(--md-md);
+  background: var(--md-surface-container); overflow: hidden;
+}
+.think summary {
+  cursor: pointer; list-style: none;
+  min-height: 40px; padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+  color: var(--md-on-surface-variant); user-select: none;
+}
+.think summary::-webkit-details-marker { display: none; }
+.think summary::before {
+  content: ''; width: 0; height: 0; flex: 0 0 auto;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent;
+  transition: transform .18s ease;
+}
+.think[open] summary::before { transform: rotate(90deg); }
+.think .think-body {
+  padding: 0 16px 14px;
+  font-size: 14px; line-height: 22px; letter-spacing: .25px;
+  color: var(--md-on-surface-variant);
+  white-space: pre-wrap; word-break: break-word;
+  max-height: 300px; overflow-y: auto;
+}
+
+/* ==========================================================================
+   输入区
+   ========================================================================== */
+.composer-wrap {
+  flex: 0 0 auto; background: var(--md-surface);
+  padding: 8px max(16px, env(safe-area-inset-right))
+           max(12px, env(safe-area-inset-bottom))
+           max(16px, env(safe-area-inset-left));
+}
+.composer-inner { max-width: 720px; margin: 0 auto; }
+
+/* AI 加的按钮：M3 assist chip */
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.actions:empty { display: none; }
+.actions .act {
+  min-height: 32px; padding: 6px 14px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm); background: transparent;
+  color: var(--md-on-surface);
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+  display: inline-flex; align-items: center;
+  transition: background .12s ease;
+}
+.actions .act:hover { background: var(--md-hover); }
+.actions .act.fill { background: var(--md-surface-container-high); border-color: transparent; }
+.actions .act.run { border-color: var(--md-outline); }
+
+/*
+ * 系统能力条：权限 / 文件夹。
+ * 常驻在 AI 按钮上面 —— 因为"AI 能不能碰手机文件"是用户随时要能看见、
+ * 随时要能改的东西，不该藏进设置页里。
+ */
+.sysbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.sysbar:empty { display: none; }
+.sysbar .chip {
+  min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm); background: transparent;
+  color: var(--md-on-surface-variant);
+  font-size: 13px; font-weight: 500; letter-spacing: .1px;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background .12s ease, color .12s ease;
+}
+.sysbar .chip:hover { background: var(--md-hover); }
+/* 已经开着的能力：用 M3 次级容器色标出来，一眼看出"现在是通的" */
+.sysbar .chip.on {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  border-color: transparent;
+}
+/* 该给权限却没给：标红提醒 */
+.sysbar .chip.warn { color: var(--md-error); border-color: var(--md-error); }
+.sysbar .chip .dot {
+  width: 8px; height: 8px; border-radius: var(--md-full);
+  background: currentColor; opacity: .45; flex: 0 0 auto;
+}
+.sysbar .chip.on .dot { opacity: 1; }
+
+/*
+ * 附件条：挂在输入框上方。
+ * 用 chip 的样子，和"文件权限"那条视觉上是一家人。
+ */
+.files { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.files:empty { display: none; }
+/* 和 .sysbar 里的芯片同一套外观 —— 只写 .sysbar 的话这里的芯片是裸的 */
+.files .chip {
+  min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm); background: transparent;
+  color: var(--md-on-surface-variant);
+  font-size: 13px; font-weight: 500; letter-spacing: .1px;
+  display: inline-flex; align-items: center; gap: 6px;
+  max-width: 100%; overflow: hidden;
+  transition: background .12s ease, color .12s ease;
+}
+.files .chip:hover { background: var(--md-hover); }
+.files .chip.on {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  border-color: transparent;
+}
+.files .chip .dot {
+  width: 8px; height: 8px; border-radius: var(--md-full);
+  background: currentColor; opacity: 1; flex: 0 0 auto;
+}
+.files .chip:has(.chipimg) { min-height: 36px; padding-left: 6px; }
+
+/*
+ * 图片附件的缩略图。
+ *
+ * ★ 这一段**被误删过一次**，代价是用户又看到"传张图把整个软件盖住了"：
+ *   类名是全页唯一的，所以这里裸写 + 四重尺寸兜底。
+ *   另外 JS 那边还加了**行内样式**当第二道保险 —— 见 renderFiles()。
+ *   教训：靠"某处有个 CSS 规则"来约束一张 <img> 太脆了，行内样式才稳。
+ */
+.chipimg {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  max-width: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  border-radius: 4px;
+  object-fit: cover;
+  flex: 0 0 auto;
+  display: block;
+}
+
+/*
+ * 拖着文件在窗口上方时的提示。
+ * 电脑版以前往窗口里拖图片 = Chromium 直接导航过去，整个软件变成那张图。
+ * 现在接住了并当成附件，那就得让用户看得出"松手就加进来"。
+ */
+body.dropping::after {
+  content: "松手就把它加进来";
+  position: fixed; inset: 12px; z-index: 200;
+  border: 2px dashed var(--md-primary);
+  border-radius: var(--md-lg, 16px);
+  background: color-mix(in srgb, var(--md-primary) 8%, transparent);
+  color: var(--md-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 500; letter-spacing: .5px;
+  pointer-events: none;
+}
+
+/* 输入框里的回形针 */
+.composer .attach {
+  flex: 0 0 auto; width: 40px; height: 40px;
+  margin-bottom: 4px; border-radius: var(--md-full);
+  color: var(--md-on-surface-variant);
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s ease;
+}
+.composer .attach:hover { background: var(--md-hover); }
+.composer .attach.has { color: var(--md-primary); }
+.composer .attach svg { display: block; }
+
+/* 附件在对话气泡里的样子 */
+.bubble .bfiles {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+  padding-top: 8px; border-top: 1px solid rgba(33,0,93,.18);
+}
+.bubble .bfiles span {
+  font-size: 12px; line-height: 16px; letter-spacing: .2px;
+  background: rgba(33,0,93,.10); border-radius: var(--md-xs);
+  padding: 3px 8px;
+}
+
+/* ==========================================================================
+   "做好了"卡片 —— 挂在 AI 回复的底部
+   ========================================================================== */
+.makecard {
+  margin-top: 12px;
+  border-radius: var(--md-md);
+  background: var(--md-surface-container);
+  padding: 14px 16px;
+}
+.makecard .mc-title {
+  font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .1px;
+  color: var(--md-on-surface); margin-bottom: 12px;
+}
+.makecard .mc-row { display: flex; gap: 8px; }
+.makecard .mc-btn { height: 36px; padding: 0 20px; font-size: 14px; }
+
+/* 预览时闪一下，让他一眼看到是哪个控件 */
+.widget.flash, .panel.flash {
+  animation: nvflash 1.2s ease;
+}
+@keyframes nvflash {
+  0%, 100% { background: transparent; }
+  25%, 75% { background: var(--md-secondary-container); }
+}
+
+/* 输入框：M3 search bar，扁平 surface-container-high */
+.composer {
+  display: flex; align-items: flex-end; gap: 8px;
+  min-height: 56px; padding: 8px 8px 8px 20px;
+  /* M3 search bar 规范就是 28dp 圆角 —— 不是全圆胶囊 */
+  border-radius: var(--md-xl);
+  background: var(--md-surface-container-high);
+  transition: background .14s ease;
+}
+.composer:focus-within { background: var(--md-surface-container-highest); }
+.composer textarea {
+  flex: 1 1 auto; border: none; outline: none; resize: none;
+  background: transparent; padding: 8px 0; max-height: 160px;
+  font-size: 16px; line-height: 24px; letter-spacing: .5px; min-height: 32px;
+}
+.composer textarea::placeholder { color: var(--md-on-surface-variant); }
+/* 发送键：M3 FAB（唯一允许有阴影的元素之一） */
+.composer .send {
+  flex: 0 0 auto; width: 48px; height: 48px;
+  border-radius: var(--md-lg);
+  background: var(--md-primary); color: var(--md-on-primary);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--md-elev-fab);
+  transition: transform .1s ease, background .14s ease, box-shadow .14s ease;
+}
+.composer .send:active { transform: scale(.94); }
+.composer .send:disabled {
+  background: rgba(29,27,32,.12); color: rgba(29,27,32,.38);
+  box-shadow: none; cursor: not-allowed;
+}
+.composer .send.stop { background: var(--md-error); color: var(--md-on-error); }
+
+.foot {
+  margin-top: 6px; padding: 0 4px;
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 12px; line-height: 16px; letter-spacing: .4px;
+  color: var(--md-on-surface-variant);
+}
+
+/* ==========================================================================
+   右侧面板 —— 扁平 surface-container，不描边不投影
+   ========================================================================== */
+aside.sidebar {
+  flex: 0 0 320px; width: 320px;
+  background: var(--md-surface);
+  display: flex; flex-direction: column; min-height: 0;
+}
+aside.sidebar[hidden] { display: none; }
+.sidebar .sb-head {
+  height: 56px; flex: 0 0 auto;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 8px 0 16px;
+  font-size: 16px; font-weight: 500; letter-spacing: .15px;
+}
+.sidebar .sb-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 12px 16px; }
+
+/* 面板：同样不要底色，只留标题和间距（见 .widget 上的说明） */
+.panel {
+  border-radius: var(--md-md);
+  margin-bottom: 20px; overflow: hidden;
+}
+.panel .p-head {
+  display: flex; align-items: center; gap: 4px;
+  min-height: 40px; padding: 4px 8px 0 4px;
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+  color: var(--md-on-surface-variant);
+}
+.panel .p-head .t { flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.panel .p-body {
+  padding: 4px 4px 4px;
+  font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  color: var(--md-on-surface);
+}
+.panel .p-body :first-child { margin-top: 0; }
+.panel .p-body :last-child { margin-bottom: 0; }
+
+/* ==========================================================================
+   左侧栏（控件 / 按钮）
+   ========================================================================== */
+aside.rail {
+  flex: 0 0 auto; width: 156px;
+  background: var(--md-surface);
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 0 10px 12px; overflow-y: auto;
+}
+aside.rail[hidden] { display: none; }
+.rail-btns { display: flex; flex-direction: column; gap: 8px; }
+.rail-btns:empty { display: none; }
+.rail-widgets { display: flex; flex-direction: column; gap: 10px; }
+.rail-widgets:empty { display: none; }
+
+.rail .act {
+  min-height: 40px; padding: 8px 10px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm); background: transparent;
+  color: var(--md-on-surface);
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+  text-align: center; word-break: break-word;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .12s ease;
+}
+.rail .act:hover { background: var(--md-hover); }
+.rail .act.fill { background: var(--md-surface-container-high); border-color: transparent; }
+.rail .act.run { border-color: var(--md-outline); }
+
+/*
+ * 控件卡片：**不要底色**。
+ * 之前给了一层 surface-container（就是用户说的"那个灰色框"），
+ * 每个 AI 做出来的东西都被套在一个灰盒子里，看着像没做完的占位。
+ * 现在只有标题和间距来分隔，内容直接落在页面上。
+ */
+.widget {
+  border-radius: var(--md-md);
+  padding: 10px 4px; text-align: center;
+  user-select: none;
+}
+.widget .w-title {
+  font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: .5px;
+  color: var(--md-on-surface-variant); margin-bottom: 8px;
+}
+.widget .w-big {
+  font-size: 28px; line-height: 36px; font-weight: 400; letter-spacing: 0;
+  color: var(--md-on-surface); font-variant-numeric: tabular-nums;
+}
+.widget .w-sub {
+  margin-top: 4px; font-size: 12px; line-height: 16px; letter-spacing: .4px;
+  color: var(--md-on-surface-variant);
+}
+.widget .w-html {
+  font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  color: var(--md-on-surface); text-align: left;
+}
+.widget .w-html :first-child { margin-top: 0; }
+.widget .w-html :last-child { margin-bottom: 0; }
+/* AI 写的控件里的裸控件也按 M3 走 */
+.widget .w-html button {
+  min-height: 40px; padding: 0 20px; border-radius: var(--md-full);
+  background: var(--md-primary); color: var(--md-on-primary);
+  font-size: 14px; font-weight: 500;
+}
+.widget .w-html input, .widget .w-html select {
+  min-height: 40px; padding: 0 12px;
+  border: 1px solid var(--md-outline); border-radius: var(--md-xs);
+  background: transparent;
+}
+
+/* ==========================================================================
+   首屏
+   ========================================================================== */
+.hero-inner { display: none; text-align: center; padding: 0 24px 28px; }
+.hero-inner .line {
+  font-size: clamp(28px, 8vw, 36px);
+  line-height: 1.22; font-weight: 400; letter-spacing: 0;
+  text-align: center; min-height: 1.22em;
+}
+.hero-inner .line .caret {
+  display: inline-block; width: 3px; height: .92em;
+  background: var(--md-primary); vertical-align: -0.1em; margin-left: 4px;
+  animation: blink 1s steps(2) infinite;
+}
+.chat.hero { justify-content: center; }
+.chat.hero .hero-inner { display: block; }
+.chat.hero .scroll { display: none; }
+.chat.hero .composer-wrap { padding-bottom: 24px; }
+.chat.hero .foot { visibility: hidden; }
+
+/* ==========================================================================
+   对话列表抽屉（左边滑出来）
+   ========================================================================== */
+.drawer-mask { position: fixed; inset: 0; z-index: 72; background: rgba(0,0,0,.32); }
+.drawer-mask[hidden] { display: none; }
+.drawer {
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 73;
+  width: min(86vw, 320px);
+  background: var(--md-surface-container-low);
+  display: flex; flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform .2s ease;
+  box-shadow: var(--md-elev-dialog);
+}
+.drawer.show { transform: translateX(0); }
+.drawer[hidden] { display: none; }
+.dr-head {
+  flex: 0 0 auto; min-height: 64px;
+  padding: max(8px, env(safe-area-inset-top)) 12px 8px 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.dr-head .dr-title { flex: 1 1 auto; font-size: 18px; font-weight: 500; }
+.dr-head .btn-tonal { height: 36px; padding: 0 16px; font-size: 14px; }
+.dr-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 8px 16px; }
+.dr-item {
+  display: flex; align-items: center; gap: 6px;
+  min-height: 56px; padding: 8px 6px 8px 16px;
+  border-radius: var(--md-md);
+  color: var(--md-on-surface); cursor: pointer;
+}
+.dr-item:hover { background: var(--md-hover); }
+.dr-item.current {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+.dr-item .dr-txt { flex: 1 1 auto; min-width: 0; }
+.dr-item .dr-name {
+  font-size: 14px; line-height: 20px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dr-item .dr-time {
+  font-size: 12px; line-height: 16px; margin-top: 2px;
+  color: var(--md-on-surface-variant);
+}
+.dr-item.current .dr-time { color: inherit; opacity: .75; }
+.dr-item .dr-del {
+  flex: 0 0 auto; min-width: 32px; height: 32px; padding: 0 8px;
+  border-radius: var(--md-full);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--md-on-surface-variant); font-size: 16px;
+}
+.dr-item .dr-del:hover { background: var(--md-hover); }
+/* 第一次点变成"确认删除"，第二次才真删 —— 免得手滑把一条对话弄没 */
+.dr-item .dr-del.arm {
+  background: var(--md-error); color: var(--md-on-error);
+  font-size: 13px; font-weight: 500;
+}
+.dr-empty {
+  padding: 24px 16px; text-align: center;
+  font-size: 14px; color: var(--md-on-surface-variant);
+}
+
+/* ==========================================================================
+   对话框
+   ========================================================================== */
+.overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,.32);
+  /* align-items 用 flex-start + 卡片自己的 margin:auto ——
+     直接写 center 的话，卡片一旦比屏幕高，顶部会被切掉**而且滚不上去**
+     （用户截图里那半截字就是这么来的）。 */
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: calc(24px + env(safe-area-inset-top)) 24px
+           calc(24px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.overlay[hidden] { display: none; }
+.card {
+  width: 100%; max-width: 420px;
+  /* 装得下就居中，装不下就从顶部正常滚 */
+  margin: auto; flex: 0 0 auto;
+  background: var(--md-surface-container-high);
+  border-radius: var(--md-xl); padding: 24px;
+  box-shadow: var(--md-elev-dialog);
+}
+.card h2 {
+  margin: 0 0 16px; text-align: center;
+  font-size: 24px; line-height: 32px; font-weight: 400; letter-spacing: 0;
+}
+.card p.desc {
+  margin: 0 0 24px; text-align: center;
+  font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  color: var(--md-on-surface-variant);
+}
+
+.field { margin-bottom: 16px; }
+.field > label {
+  display: block; margin-bottom: 6px;
+  font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: .5px;
+  color: var(--md-on-surface-variant);
+}
+.field input, .field select {
+  width: 100%; height: 56px; padding: 0 16px;
+  border: 1px solid var(--md-outline); border-radius: var(--md-xs);
+  background: transparent; font-size: 16px; letter-spacing: .5px; outline: none;
+  transition: border-color .14s ease, box-shadow .14s ease;
+}
+/* 系统提示词那个编辑框 */
+.field textarea {
+  width: 100%; min-height: 132px; padding: 12px 14px;
+  border: 1px solid var(--md-outline); border-radius: var(--md-xs);
+  background: transparent; outline: none; resize: vertical;
+  font-family: var(--md-mono); font-size: 12.5px; line-height: 19px;
+  letter-spacing: 0;
+  transition: border-color .14s ease, box-shadow .14s ease;
+}
+.field textarea:focus {
+  border-color: var(--md-primary);
+  box-shadow: inset 0 0 0 1px var(--md-primary);
+}
+.field input:focus, .field select:focus {
+  border-color: var(--md-primary);
+  box-shadow: inset 0 0 0 1px var(--md-primary);
+}
+.field .hint {
+  margin-top: 6px; font-size: 12px; line-height: 16px; letter-spacing: .4px;
+  color: var(--md-on-surface-variant);
+}
+.field label.check {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: .25px;
+  cursor: pointer; margin-bottom: 0;
+}
+.field label.check input {
+  width: 20px; height: 20px; margin: 0; flex: 0 0 auto;
+  accent-color: var(--md-primary); cursor: pointer;
+}
+.card .actions-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 24px;
+  flex-wrap: wrap; }
+/* 对话框里的按钮：可以换行、可以缩到很窄，但绝不会把字挤出去 */
+.card .actions-row > button { flex: 1 1 auto; min-width: 0; padding-left: 12px; padding-right: 12px; }
+
+/*
+ * 设置里的「AI 的能力与权限」清单。
+ * 每一行 = 一个开关 + 名字 + 一句说明。视觉上刻意做得比正文轻 ——
+ * 这是配置区，不该抢戏。
+ */
+.caplist {
+  margin-top: 4px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-sm, 12px);
+  overflow: hidden;
+}
+.caprow {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+.caprow:last-child { border-bottom: none; }
+.caprow > input[type="checkbox"] {
+  width: 20px; height: 20px; min-width: 20px; margin: 2px 0 0; flex: 0 0 auto;
+  accent-color: var(--md-primary); cursor: pointer;
+}
+.caprow .cap-txt { min-width: 0; flex: 1 1 auto; }
+.caprow .cap-name {
+  font-size: 14px; line-height: 20px; letter-spacing: .2px;
+  color: var(--md-on-surface);
+}
+.caprow .cap-desc {
+  margin-top: 2px; font-size: 12px; line-height: 16px; letter-spacing: .3px;
+  color: var(--md-on-surface-variant);
+}
+/* 关掉的那几行整体压灰，一眼能看出"这个能力没了" */
+.caprow.off .cap-name { color: var(--md-on-surface-variant); }
+.caprow.off .cap-desc { opacity: .7; }
+/* 自己加的那两条：直接就是输入框，点了就能改 */
+.caprow .cap-in {
+  width: 100%; height: 30px; padding: 0 8px; margin: 0;
+  border: 1px solid var(--md-outline-variant); border-radius: 6px;
+  background: transparent; color: var(--md-on-surface);
+  font-size: 13px; letter-spacing: .2px; outline: none;
+}
+.caprow .cap-in:focus { border-color: var(--md-primary); }
+.caprow .cap-in-desc { margin-top: 5px; color: var(--md-on-surface-variant); }
+.caprow .cap-del {
+  flex: 0 0 auto; width: 30px; height: 30px; min-height: 30px; padding: 0;
+  border: none; border-radius: 50%; background: transparent;
+  color: var(--md-on-surface-variant); font-size: 20px; line-height: 1;
+  cursor: pointer;
+}
+.caprow .cap-del:hover { background: var(--md-hover); color: var(--md-error); }
+.capquick {
+  display: flex; flex-wrap: wrap; gap: 16px; margin-top: 4px;
+  align-items: center;
+}
+/* 更新说明那几行 */
+.updnotes {
+  margin: 0 0 8px; padding: 12px 14px;
+  border-radius: var(--md-xs);
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+  font-size: 13px; line-height: 20px; letter-spacing: .3px;
+  white-space: pre-wrap; max-height: 40vh; overflow-y: auto;
+}
+
+
+.ask-opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.ask-opt {
+  text-align: left; min-height: 56px; padding: 14px 16px;
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--md-md); background: transparent;
+  font-size: 16px; line-height: 24px; letter-spacing: .5px;
+  transition: background .12s ease, border-color .12s ease;
+}
+.ask-opt:hover { background: var(--md-hover); border-color: var(--md-outline); }
+.ask-opt:active { background: var(--md-press); }
+
+/* 长按菜单（替代那个到处都有的 ×） */
+.sheet-mask { position: fixed; inset: 0; z-index: 96; background: rgba(0,0,0,.32); }
+.sheet-mask[hidden] { display: none; }
+.sheet {
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 97;
+  background: var(--md-surface-container-high);
+  border-radius: var(--md-xl); padding: 8px 0;
+  box-shadow: var(--md-elev-dialog);
+  transform: translateY(8px); opacity: 0;
+  transition: opacity .16s ease, transform .16s ease;
+  max-width: 420px; margin: 0 auto;
+}
+.sheet.show { opacity: 1; transform: translateY(0); }
+.sheet[hidden] { display: none; }
+.sheet .s-title {
+  padding: 12px 24px 8px;
+  font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  color: var(--md-on-surface-variant);
+}
+.sheet .s-item {
+  display: flex; align-items: center; gap: 16px;
+  width: 100%; min-height: 56px; padding: 0 24px;
+  font-size: 16px; line-height: 24px; letter-spacing: .5px;
+  color: var(--md-on-surface); text-align: left;
+}
+.sheet .s-item:hover { background: var(--md-hover); }
+.sheet .s-item.danger { color: var(--md-error); }
+.sheet .s-item svg { flex: 0 0 auto; }
+
+/* ==========================================================================
+   弹出小框
+   ========================================================================== */
+.popup-mask { position: fixed; inset: 0; z-index: 94; background: rgba(0,0,0,.32); }
+.popup-mask[hidden] { display: none; }
+.popup {
+  position: fixed; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(.96);
+  z-index: 95; min-width: 280px; max-width: min(420px, 88vw);
+  background: var(--md-surface-container-high);
+  border-radius: var(--md-xl); padding: 24px; text-align: center;
+  box-shadow: var(--md-elev-dialog); opacity: 0;
+  transition: opacity .16s ease, transform .16s ease;
+}
+.popup.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.popup[hidden] { display: none; }
+.popup .p-title {
+  font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: .1px;
+  color: var(--md-on-surface-variant); margin-bottom: 12px;
+}
+.popup .p-main {
+  font-size: 45px; line-height: 52px; font-weight: 400; letter-spacing: 0;
+  color: var(--md-primary); font-variant-numeric: tabular-nums;
+}
+.popup .p-main.small {
+  font-size: 14px; line-height: 22px; font-weight: 400; letter-spacing: .25px;
+  color: var(--md-on-surface); white-space: pre-wrap; text-align: left;
+  max-height: 56vh; overflow-y: auto;
+}
+.popup .p-sub {
+  margin-top: 8px; font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  color: var(--md-on-surface-variant);
+}
+.popup .p-close {
+  margin-top: 24px; height: 40px; padding: 0 24px;
+  border-radius: var(--md-full);
+  background: var(--md-primary); color: var(--md-on-primary);
+  font-size: 14px; font-weight: 500; letter-spacing: .1px;
+}
+
+/* Snackbar */
+.toast {
+  position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: var(--md-inverse-surface); color: var(--md-inverse-on-surface);
+  min-height: 48px; padding: 14px 16px; border-radius: var(--md-xs);
+  font-size: 14px; line-height: 20px; letter-spacing: .25px;
+  box-shadow: var(--md-elev-dialog); z-index: 90;
+  pointer-events: none; opacity: 0; transition: opacity .2s ease; max-width: 88vw;
+}
+.toast.show { opacity: 1; }
+
+/* ==========================================================================
+   Markdown
+   ========================================================================== */
+.content h1, .content h2, .content h3 { margin: 20px 0 8px; font-weight: 400; line-height: 1.35; }
+.content h1 { font-size: 24px; }
+.content h2 { font-size: 20px; }
+.content h3 { font-size: 16px; font-weight: 500; }
+.content p { margin: 0 0 12px; }
+.content ul, .content ol { margin: 0 0 12px; padding-left: 24px; }
+.content li { margin: 4px 0; }
+.content code {
+  font-family: var(--md-mono); font-size: 13px;
+  background: var(--md-surface-container-high);
+  border-radius: var(--md-xs); padding: 2px 6px;
+}
+.content pre {
+  background: var(--md-surface-container);
+  border-radius: var(--md-md); padding: 16px; overflow-x: auto; margin: 0 0 12px;
+}
+.content pre code { background: none; padding: 0; font-size: 13px; line-height: 20px; }
+.content blockquote {
+  margin: 0 0 12px; padding-left: 16px;
+  border-left: 4px solid var(--md-primary-container);
+  color: var(--md-on-surface-variant);
+}
+.content hr { border: none; border-top: 1px solid var(--md-outline-variant); margin: 20px 0; }
+.content table { border-collapse: collapse; margin: 0 0 12px; font-size: 14px; }
+.content th, .content td { border: 1px solid var(--md-outline-variant); padding: 8px 12px; text-align: left; }
+.content th { background: var(--md-surface-container); font-weight: 500; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ==========================================================================
+   适配
+   ========================================================================== */
+@media (orientation: portrait) {
+  main.body { flex-direction: column; }
+
+  aside.rail {
+    width: auto; flex: 0 0 auto;
+    flex-direction: row; align-items: stretch;
+    gap: 8px; padding: 0 12px 8px;
+    overflow-x: auto; overflow-y: hidden;
+  }
+  .rail-btns { flex-direction: row; gap: 8px; }
+  .rail-widgets { flex-direction: row; gap: 8px; }
+  .rail .act { min-width: 96px; }
+  .widget { min-width: 132px; flex: 0 0 auto; }
+
+  aside.sidebar {
+    position: fixed; inset: var(--md-topbar-h) 0 0 0; z-index: 60;
+    flex-basis: auto; width: auto;
+  }
+
+  .stream { padding: 12px 16px 8px; }
+  .topbar h1 { font-size: 20px; line-height: 26px; }
+}
+
+@media (max-width: 380px) {
+  .topbar h1 { font-size: 18px; }
+  .widget { min-width: 116px; }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  :root { --md-topbar-h: 56px; }
+  .stream { padding: 12px 16px 6px; }
+  .msg { margin-bottom: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <button class="icon-btn" id="btnHistory" title="历史对话"></button>
+    <h1 id="appTitle">NovaDesk</h1>
+    <!-- AI 说"放在最顶部"时，小控件落在这里（时钟这类） -->
+    <div class="topwidgets" id="topWidgets"></div>
+    <button class="icon-btn" id="btnThink" title="思考模式"></button>
+    <button class="icon-btn" id="btnNew" title="新对话"></button>
+    <button class="icon-btn" id="btnSettings" title="设置"></button>
+  </header>
+  <!--
+    逃生口：AI 能把顶栏整个收掉，那设置按钮也就没了。
+    只要顶栏不在，这个悬浮小球就出现 —— 点它一样能进设置。
+    它**不在** AI 能隐藏的清单里，是最后一条退路。
+  -->
+  <button class="escapebtn" id="escapeBtn" title="设置（界面被收起来时的入口）" hidden></button>
+
+  <main class="body">
+    <aside class="rail" id="rail" hidden>
+      <div class="rail-btns" id="railBtns"></div>
+      <div class="rail-widgets" id="railWidgets"></div>
+    </aside>
+
+    <section class="chat hero" id="chat">
+      <div class="hero-inner" id="hero">
+        <div class="line"></div>
+      </div>
+      <div class="scroll" id="scroll">
+        <div class="stream" id="stream"></div>
+      </div>
+      <div class="composer-wrap">
+        <div class="composer-inner">
+          <div class="files" id="files"></div>
+          <div class="sysbar" id="sysbar"></div>
+          <div class="actions" id="actions"></div>
+          <div class="composer">
+            <button class="attach" id="btnAttach" title="加文件给 AI 看"></button>
+            <textarea id="input" rows="1" placeholder="发消息…"></textarea>
+            <button class="send" id="btnSend" title="发送" aria-label="发送"></button>
+          </div>
+          <div class="foot">
+            <span id="footHint"></span>
+            <span id="footCount"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar" id="sidebar" hidden>
+      <div class="sb-head">
+        <span style="flex:1 1 auto">面板</span>
+        <button class="btn-text" id="btnClosePanels">收起</button>
+      </div>
+      <div class="sb-body" id="panels"></div>
+    </aside>
+  </main>
+</div>
+
+<div class="overlay" id="setup" hidden>
+  <div class="card">
+    <h2>欢迎使用 NovaDesk</h2>
+    <p class="desc">需要 DeepSeek 的 API key 才能对话。key 只存在你本机。</p>
+    <div class="field">
+      <label for="setupKey">API Key</label>
+      <input id="setupKey" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false">
+      <div class="hint">去 platform.deepseek.com 创建一个。只写进本机存储。</div>
+    </div>
+    <div class="actions-row">
+      <button class="btn-filled" id="setupSave">开始使用</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="settings" hidden>
+  <div class="card">
+    <h2>设置</h2>
+    <p class="desc">这个系统的一部分是 AI 自己改造出来的。</p>
+    <div class="field">
+      <label for="setKey">API Key</label>
+      <input id="setKey" type="password" autocomplete="off" spellcheck="false">
+      <div class="hint" id="setKeyHint"></div>
+    </div>
+    <div class="field">
+      <label for="setModel">模型</label>
+      <select id="setModel"></select>
+    </div>
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" id="setQuiet">
+        <span>改造系统时保持安静</span>
+      </label>
+      <div class="hint">开着时：做完就不在对话里说话，你只会看到那个东西出现。</div>
+    </div>
+    <div class="field">
+      <label class="check">
+        <input type="checkbox" id="setScript">
+        <span>允许 AI 写的控件运行脚本</span>
+      </label>
+      <div class="hint">开着时 AI 能用 HTML + CSS + JS 做出任何东西。</div>
+    </div>
+    <div class="field">
+      <label>AI 的能力与权限</label>
+      <div class="hint">这就是它现在**能做的事**。勾掉哪一项，对应的工具就
+        **根本不会发给它** —— 不是"求它别用"，是它连有这个东西都不知道，想调也调不到。
+        点右边的 × 能从清单里删掉；底下的「+ 添加」可以自己加一条能力或权限，
+        **加了的会当成硬性规定要它照做**。改完点下面的「保存」生效。</div>
+      <div class="caplist" id="capList"></div>
+      <div class="capquick">
+        <button class="btn-text" id="capAdd">＋ 添加一项能力 / 权限</button>
+        <button class="btn-text" id="capAllOn">全开</button>
+        <button class="btn-text" id="capAllOff">全关（它就只能回文字）</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>它实际收到的东西</label>
+      <div class="hint">= 系统提示词 + 当下的时间/运行环境 + 你加的能力。
+        想确认自己改的有没有生效，点开看一眼就知道。</div>
+      <div class="capquick">
+        <button class="btn-text" id="setPreview">看一眼实际发出去的内容</button>
+        <button class="btn-text" id="setCheckUpdate">检查更新</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="setPrompt">系统提示词（它会当成命令，不折不扣执行）</label>
+      <textarea id="setPrompt" rows="7" spellcheck="false"
+                placeholder="留空就用内置的默认提示词"></textarea>
+      <div class="hint">这是给 AI 的"说明书"，同时**也是命令** —— 它会被放在给 AI 的
+        **最末尾**，标着"最高优先级、覆盖前面所有内容、不得违抗"。
+        想调它的脾气（更简短、固定风格、只用某种格式……）直接改。
+        想让它**只说某句话、别的什么都不干**：把上面的能力**全关**，再把那句话写在这儿 ——
+        那样它一个工具都没有，只能回文字。AI 自己也能改它。「恢复默认」填回内置那份。</div>
+      <button class="btn-text" id="setPromptReset" style="margin-top:4px;padding-left:0">
+        恢复默认
+      </button>
+    </div>
+    <div class="actions-row">
+      <button class="btn-text" id="setCancel">取消</button>
+      <button class="btn-filled" id="setSave">保存</button>
+    </div>
+    <div class="actions-row">
+      <button class="btn-outlined" id="setUiReset" style="flex:1">恢复界面</button>
+      <button class="btn-outlined" id="setResetSys" style="flex:1">重置 AI 改造</button>
+      <button class="btn-outlined" id="setClearAll" style="flex:1">全部清空</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="perm" hidden>
+  <div class="card">
+    <h2>文件权限</h2>
+    <p class="desc">给 AI 多大的读写范围。只在这台手机上生效，随时能改回来。</p>
+    <div class="ask-opts" id="permOpts"></div>
+    <div class="actions-row">
+      <button class="btn-text" id="permClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ask" hidden>
+  <div class="card">
+    <h2 id="askQ">请选择</h2>
+    <p class="desc">AI 不确定你的意思，选一个，或者自己输入。</p>
+    <div class="ask-opts" id="askOpts"></div>
+    <div class="field">
+      <label for="askInput">或者自己输入</label>
+      <input id="askInput" type="text" placeholder="输入你的回答…" autocomplete="off">
+    </div>
+    <div class="actions-row">
+      <button class="btn-text" id="askSkip">跳过</button>
+      <button class="btn-filled" id="askSend">就这样回答</button>
+    </div>
+  </div>
+</div>
+
+<!-- 长按控件弹出的菜单（替代原来那个到处都有的 ×） -->
+<div class="sheet-mask" id="sheetMask" hidden></div>
+<div class="sheet" id="sheet" hidden>
+  <div class="s-title" id="sheetTitle">控件操作</div>
+  <button class="s-item danger" id="sheetDelete">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+    </svg>
+    <span>删掉它</span>
+  </button>
+  <button class="s-item" id="sheetCancel">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+    </svg>
+    <span>取消</span>
+  </button>
+</div>
+
+<div class="popup-mask" id="popupMask" hidden></div>
+<div class="popup" id="popup" hidden>
+  <div class="p-title" id="popupTitle"></div>
+  <div class="p-main" id="popupMain"></div>
+  <div class="p-sub" id="popupSub"></div>
+  <button class="p-close" id="popupClose">知道了</button>
+</div>
+
+<div class="drawer-mask" id="drawerMask" hidden></div>
+<aside class="drawer" id="drawer" hidden>
+  <div class="dr-head">
+    <span class="dr-title">对话</span>
+    <button class="btn-tonal" id="drNew">新对话</button>
+  </div>
+  <div class="dr-list" id="drList"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<!--
+  选文件给 AI 看。
+  桌面版（WebView2）和普通浏览器点它会直接弹系统文件框；
+  安卓 WebView 默认什么都不弹，得靠 MainActivity 里的 onShowFileChooser 接住。
+  刻意不写 accept：用户可能想给 AI 看任意文本文件，卡类型只会碍事，
+  是不是文本由 JS 读出来之后自己判断。
+-->
+<input type="file" id="fileInput" multiple hidden>
+
+<script>
+/*__JS_BUNDLE__*/
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider 能对外暴露的路径。
+  只开 output/ 一个目录 —— 也就是导出 APK 的落地处。
+  不要写成 <files-path name="all" path="." />，那会把整个私有目录都暴露出去。
+-->
+<paths>
+    <files-path name="output" path="output/" />
+</paths>
