@@ -304,6 +304,9 @@ $env:ELECTRON_RUN_AS_NODE=1
    （当前分享包是 2.7），不然用户分不清手机里装的是新的还是旧的。
 
    **GitHub 仓库**：https://github.com/dashen9178/NovaDesk （公开）。
+   **v2.7 安装包 Release**：
+   https://github.com/dashen9178/NovaDesk/releases/tag/v2.7 ，
+   含 `NovaDesk-2.7.apk` 和 `NovaDesk.exe`。
    仓库只含源码和构建脚本；`ai/publish.py`、`ai/real_*.py`、`local.properties`、
    构建产物和下载的 SDK 已由 `.gitignore` 排除。
 
